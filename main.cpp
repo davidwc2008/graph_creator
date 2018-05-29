@@ -98,9 +98,16 @@ void addEdge(string vertices[20], int adjacencyTable[20][20]) {
 	cin >> begin;
 	cout << "Ending Vertex: " << endl;
 	cin >> end;
-	//weight is like the numebr of miles between
+	//weight is like the number of miles between
 	cout << "Weight: " << endl;
 	cin >> weight;
+	//check to make sure the weight is an integer
+	if (cin.fail()) {
+		cout << "Error: Weight must be a number" << endl;
+		cin.clear();
+		cin.ignore();
+		return;
+	}
 	
 	//find the vertices of the beginning and ending
 	int indexBegin = getIndex(begin, vertices);
@@ -177,14 +184,24 @@ void removeEdge(string vertices[20], int adjacencyTable[20][20]) {
 	cout << "Success: Removed edge" << endl;	
 }
 
-int shortestPath() {
-	string begin;
-	string end;
-	
+//use breadth first search to find the shortest path
+int shortestPath(string vertices[20]) {
+	string begin, end;
 	cout << "Enter beginning vertex: " << endl;
 	cin >> begin;
 	cout << "Enter ending vertex: " << endl;
 	cin >> end;
+	
+	int indexBegin = getIndex(begin, vertices);
+	int indexEnd = getIndex(end, vertices);
+	
+	//check to make sure vertices exist
+	if (indexBegin == -1 || indexEnd == -1) {
+		cout << "Invalid Vertices" << endl;
+		return -1;
+	}
+	
+	
 }
 
 void print(string vertices[20], int adjacencyTable[20][20]) {
