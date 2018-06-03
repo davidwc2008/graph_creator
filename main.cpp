@@ -5,6 +5,7 @@ Graph Creator Program
 
 #include <iostream>
 #include <cstring>
+#include <vector>
 
 using namespace std;
 
@@ -14,8 +15,14 @@ void addVertex(string[], int &);
 void addEdge(string[], int[20][20]);
 void removeVertex(string[], int[20][20], int &);
 void removeEdge(string[], int[20][20]);
-int shortestPath();
+void shortestPath(string[], int[20][20]);
 void print(string[], int[20][20]);
+
+struct Node {
+	string name;
+	int distance;
+	Node* previous = NULL;	
+};
 
 int main() {
 	bool done = false;
@@ -49,7 +56,7 @@ int main() {
 		} else if (command == 4) {
 			removeEdge(vertices, adjacencyTable);
 		} else if (command == 5) { 
-		
+			shortestPath(vertices, adjacencyTable);
 		} else if (command == 6) {
 			print(vertices, adjacencyTable);
 		} else if (command == 7) {
@@ -185,7 +192,7 @@ void removeEdge(string vertices[20], int adjacencyTable[20][20]) {
 }
 
 //use breadth first search to find the shortest path
-int shortestPath(string vertices[20]) {
+void shortestPath(string vertices[20], int adjacencyTable[20][20]) {
 	string begin, end;
 	cout << "Enter beginning vertex: " << endl;
 	cin >> begin;
@@ -198,10 +205,74 @@ int shortestPath(string vertices[20]) {
 	//check to make sure vertices exist
 	if (indexBegin == -1 || indexEnd == -1) {
 		cout << "Invalid Vertices" << endl;
-		return -1;
+		return;
 	}
 	
+	vector<Node*> unvisited;
+	vector<Node*> visited;
 	
+	//intialization
+	for (int i = 0; i < 20; i++) {
+		if(vertices[i] != "") {
+			Node* a = new Node();
+			a->name = vertices[i];
+			if (i == indexBegin) {
+				a->distance = 0;
+			} else {
+				a->distance = 99999999;
+			}
+			unvisited.push_back(a);
+		}
+	}
+	
+	while (!unvisited.empty()) {
+		int minIndex = 0; //index of node with minimum distance
+		for (int i = 1; i < unvisited.size(); i++) {
+			if (unvisited[i]->distance < unvisited[minIndex]->distance) {
+				minIndex = i;
+			}
+		}
+		Node* u = unvisited[minIndex];
+		unvisited.erase(unvisited.begin() + minIndex);
+		visited.push_back(u);
+		
+		for(Node* v : unvisited) {
+			int indexU = getIndex(u->name, vertices);
+			int indexV = getIndex(v->name, vertices);
+			//check to see if the edge exist, they are neighbors!
+			if (adjacencyTable[indexU][indexV] >= 0) {
+				int alternate = u->distance + adjacencyTable[indexU][indexV];
+				if (alternate < v->distance) {
+					v->distance = alternate;
+					v->previous = u;
+				}
+			}
+
+		}
+	}
+	Node* endNode;
+	for (Node* n : visited) {
+		if (n->name == end) {
+			endNode = n;
+			break;
+		}
+	}
+	if (endNode->previous == NULL) {
+		cout << "Error: No path exists." << endl;
+	} else {
+		vector<Node*> path;
+		Node* current = endNode;
+		while(current != NULL) {
+			path.push_back(current);
+			current = current->previous;
+		}
+		cout << "Path: " << endl;
+		for (vector<Node*>::iterator it = path.end()-1; it != path.begin()-1; it--) {
+			cout << (*it)->name << ", ";
+		}
+		cout << endl;
+		cout << "Distance: " << endNode->distance << endl;	
+	}
 }
 
 void print(string vertices[20], int adjacencyTable[20][20]) {
