@@ -30,6 +30,11 @@ int main() {
 	string vertices[20]; //an ordered list of all the vertices
 	int adjacencyTable[20][20]; //a 2D array
 	int nextVertex = 0; //a counter for the next vertex
+
+	//clear the vertices array
+	for (int i = 0; i < 20; i++) {
+	  vertices[i] = ' ';
+	}
 	
 	//clear the adjacency table
 	for (int i = 0; i < 20; i++) {
