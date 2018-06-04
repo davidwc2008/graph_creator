@@ -33,7 +33,7 @@ int main() {
 
 	//clear the vertices array
 	for (int i = 0; i < 20; i++) {
-	  vertices[i] = ' ';
+	  vertices[i] = "";
 	}
 	
 	//clear the adjacency table
